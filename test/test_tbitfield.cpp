@@ -2,10 +2,6 @@
 
 #include <gtest.h>
 
-TEST(TEST, test) 
-{
-	ASSERT_EQ(0, 0);
-}
 
 TEST(TBitField, can_create_bitfield_with_positive_length)
 {
