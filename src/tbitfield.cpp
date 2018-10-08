@@ -11,7 +11,8 @@ TBitField::TBitField(int len)
 {
 	if (len <= 0) throw - 1;
 	BitLen = len;
-	MemLen = int(ceil(double(BitLen) / double(sizeof(TELEM))));
+	//MemLen = int(ceil(double(BitLen) / double(sizeof(TELEM))));
+	MemLen = (len + 31) >> 5;
 	pMem = new TELEM[MemLen];
 	for (int i = 0; i < MemLen; i++)
 		pMem[i] = 0;
@@ -35,12 +36,14 @@ TBitField::~TBitField() //Деструктор
 
 int TBitField::GetMemIndex(const int n) const // индекс Мем для бита n
 {
-	return int(double(n) / double(sizeof(TELEM))); 
+	return n >> 5;
+	//return int(double(n) / double(sizeof(TELEM))); 
 }
 
 TELEM TBitField::GetMemMask(const int n) const // битовая маска для бита n
 {
-	return 1 << int(n - sizeof(TELEM)*GetMemIndex(n));
+	return 1 << (n & 31);
+	//return 1 << int(n - sizeof(TELEM)*GetMemIndex(n));
 }
 
 // доступ к битам битового поля
@@ -65,8 +68,7 @@ void TBitField::ClrBit(const int n) // очистить бит
 int TBitField::GetBit(const int n) const // получить значение бита
 {
 	if (n < 0 || n >= BitLen) throw - 1;
-	if (pMem[GetMemIndex(n)] && GetMemMask(n)) return 1;
-	else return 0;
+	return (pMem[GetMemIndex(n)] & GetMemMask(n));
 }
 
 // битовые операции
@@ -104,53 +106,36 @@ int TBitField::operator==(const TBitField &bf) const // сравнение
 
 int TBitField::operator!=(const TBitField &bf) const // сравнение
 {
-	if (BitLen != bf.BitLen || MemLen != bf.MemLen)
-		return 1;
-	for (int i = 0; i < MemLen; i++)
-	{
-		if (pMem[i] != bf.pMem[i])
-			return 1;
-	}
-	return 0;
+	return !(*this == bf);
 }
 
 TBitField TBitField::operator|(const TBitField &bf) // операция "или"
 {
 	TBitField tmp(max(BitLen, bf.BitLen)); //новое поле создаем таким, чтоб уместить туда наибольшее из 2х битовых полей
-	for (int i = 0; i < min(MemLen, bf.MemLen); i++) 
-	{
-		tmp.pMem[i] = pMem[i] | bf.pMem[i]; //полностью проходим меньшее из 2х полей и одновременно сравниваем биты с большим полем
-	}
-	if (BitLen < bf.BitLen) //довесок в зависимости от того, какое было длиннее
-	{
-		for (int i = MemLen; i < bf.MemLen; i++)
-			tmp.pMem[i] = bf.pMem[i];
-	}
-	else
-	{
-		for (int i = bf.MemLen; i < MemLen; i++)
-			tmp.pMem[i] = pMem[i];
-	}
+	for (int i = 0; i < MemLen; i++)
+		tmp.pMem[i] = pMem[i];
+	for (int i = 0; i < bf.MemLen; i++)
+		tmp.pMem[i] |= bf.pMem[i];
 	return tmp;
 }
 
 TBitField TBitField::operator&(const TBitField &bf) // операция "и"
 {
-	return *this;
+	TBitField tmp(max(BitLen, bf.BitLen)); //новое поле создаем таким, чтоб уместить туда наибольшее из 2х битовых полей
+	for (int i = 0; i < MemLen; i++)
+		tmp.pMem[i] = pMem[i];
+	for (int i = 0; i < bf.MemLen; i++)
+		tmp.pMem[i] &= bf.pMem[i];
+	return tmp;
 }
 
 TBitField TBitField::operator~(void) // отрицание
 {
 	TBitField tmp(BitLen);
-	for (int i = 0; i < BitLen; i++)
-		if (GetBit(i) == 0)
-		{
+	for (int i = 0; i < BitLen; i++) {
+		if (this->GetBit(i) == 0)
 			tmp.SetBit(i);
-		}
-		else 
-		{
-			tmp.ClrBit(i);
-		}
+	}
 	return tmp;
 }
 
