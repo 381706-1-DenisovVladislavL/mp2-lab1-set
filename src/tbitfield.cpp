@@ -143,10 +143,30 @@ TBitField TBitField::operator~(void) // отрицание
 
 istream &operator>>(istream &istr, TBitField &bf) // ввод
 {
+	string temp;
+	istr >> temp;
+	if (temp.size() != bf.GetLength())
+		throw "Incorrect length";
+	for (int i = 0; i < bf.BitLen; i++)
+	{
+		if (temp[i] == '0')
+			bf.ClrBit(i);
+		else if (temp[i] == '1')
+			bf.SetBit(i);
+		else
+			throw "Incorrect input";
+	}
 	return istr;
 }
 
 ostream &operator<<(ostream &ostr, const TBitField &bf) // вывод
 {
+	for (int i = 0; i < bf.BitLen; i++)
+	{
+		if (bf.GetBit(i))
+			ostr << 1;
+		else
+			ostr << 0;
+	}
 	return ostr;
 }

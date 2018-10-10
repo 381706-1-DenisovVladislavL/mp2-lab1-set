@@ -122,10 +122,15 @@ TSet TSet::operator~(void) // дополнение
 
 istream &operator>>(istream &istr, TSet &s) // ввод
 {
+	int i;
+	cin >> i;
+	for (; ((i > -1) && (i < s.MaxPower)); cin >> i)
+		s.BitField.SetBit(i);
 	return istr;
 }
 
 ostream& operator<<(ostream &ostr, const TSet &s) // вывод
 {
+	ostr << s.BitField << ' ';
 	return ostr;
 }
