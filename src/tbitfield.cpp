@@ -4,7 +4,8 @@ TBitField::TBitField(int len)
 {
 	if (len <= 0) throw - 1;
 	bitLen = len;
-	memLen = int(ceil(double(bitLen) / double(sizeof(uInt))));
+	//memLen = int(ceil(double(bitLen) / double(sizeof(uInt))));
+	memLen = (len + 31) >> 5;
 	pMem = new uInt[memLen];
 	for (int i = 0; i < memLen; i++)
 		pMem[i] = 0;
@@ -28,19 +29,21 @@ TBitField::~TBitField() //Деструктор
 
 int TBitField::GetMemIndex(const int n) const // индекс Мем для бита n
 {
-	return int(double(n) / double(sizeof(uInt))); 
+	//return int(ceil(double(n) / double(sizeof(uInt))));
+	return n >> 5;
 }
 
 uInt TBitField::GetMemMask(const int n) const // битовая маска для бита n
 {
-	return 1 << int(n - sizeof(uInt)*GetMemIndex(n));
+	return 1 << (n & 31);
+	//return 1 << int(n - sizeof(uInt)*GetMemIndex(n));
 }
 
 // доступ к битам битового поля
 
 int TBitField::GetLength(void) const // получить длину (к-во битов)
 {
-  return bitLen;
+	return bitLen;
 }
 
 void TBitField::SetBit(const int n) // установить бит
@@ -84,13 +87,13 @@ int TBitField::operator==(const TBitField &bf) const // сравнение
 	int res = 1;
 	if (bitLen != bf.bitLen)
 		res = 0;
-	else 
+	else
 		for (int i = 0; i < memLen; i++)
 			if (pMem[i] != bf.pMem[i])
-				{
-					res = 0; 
-					break;
-				}
+			{
+				res = 0;
+				break;
+			}
 	return res;
 }
 
@@ -139,7 +142,7 @@ istream &operator>>(istream &istr, TBitField &bf) // ввод
 		throw "Incorrect length";
 	for (int i = 0; i < bf.bitLen; i++)
 	{
-		if (temp[i] == '0')
+	  if (temp[i] == '0')
 			bf.ClrBit(i);
 		else if (temp[i] == '1')
 			bf.SetBit(i);
