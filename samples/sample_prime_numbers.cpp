@@ -7,7 +7,7 @@
 
 #include <iomanip>
 
-// #define USE_SET // Использовать класс TSet,
+ #define USE_SET // Использовать класс TSet,
                 // закоментировать, чтобы использовать битовое поле
 
 #ifndef USE_SET // Использовать класс TBitField
@@ -26,7 +26,7 @@ int main()
   TBitField s(n + 1);
   // заполнение множества
   for (m = 2; m <= n; m++)
-    s.SetBit(m);
+		s.SetBit(m);
   // проверка до sqrt(n) и удаление кратных
   for (m = 2; m * m <= n; m++)
     // если m в s, удаление кратных
@@ -56,7 +56,7 @@ int main()
 
 int main()
 {
-  int n, m, k, count;
+  int n, m, k, count, maxElem;
 
   setlocale(LC_ALL, "Russian");
   cout << "Тестирование программ поддержки множества" << endl;
@@ -89,6 +89,19 @@ int main()
     }
   cout << endl;
   cout << "В первых " << n << " числах " << count << " простых" << endl;
+
+  cout << "\n\n\tВвод множества целых чисел\n";
+  cout << "Введите наибольший элемент множества\n";
+  cin >> maxElem;
+  TSet bit(maxElem + 1);
+  cout << "Введите элементы множества (-1 или число >" << maxElem <<" для завершения ввода)\n";
+  cin >> bit;
+  cout << "\nВведенное множество в виде битовой строки\n";
+  cout << bit;
+  cout << "\n\nВведенное множество в виде хранимых в нем целых чисел\n";
+  for (m = 0; m <= maxElem; m++)
+    if (bit.IsMember(m))
+      cout << setw(3) << m << " ";
 }
 
 #endif

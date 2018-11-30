@@ -2,10 +2,10 @@
 
 TBitField::TBitField(int len)
 {
-	if (len <= 0) throw - 1;
+	if (len <= 0) 
+    throw -1;
 	bitLen = len;
-	//memLen = int(ceil(double(bitLen) / double(sizeof(uInt))));
-	memLen = (len + 31) >> 5;
+	memLen = int(double(bitLen) / (8 * sizeof(uInt))) + 1;
 	pMem = new uInt[memLen];
 	for (int i = 0; i < memLen; i++)
 		pMem[i] = 0;
@@ -17,26 +17,25 @@ TBitField::TBitField(const TBitField &bf) // конструктор копиро
 	memLen = bf.memLen;
 	pMem = new uInt[memLen];
 	for (int i = 0; i < memLen; i++)
-	{
 		pMem[i] = bf.pMem[i];
-	}
 }
 
 TBitField::~TBitField() //Деструктор
 {
 	delete[] pMem;
+  pMem = NULL;
 }
 
 int TBitField::GetMemIndex(const int n) const // индекс Мем для бита n
 {
-	//return int(ceil(double(n) / double(sizeof(uInt))));
-	return n >> 5;
+  if (n < 0 || n >= bitLen)
+    throw -1;
+  return (n / (sizeof(uInt) * 8));
 }
 
 uInt TBitField::GetMemMask(const int n) const // битовая маска для бита n
 {
-	return 1 << (n & 31);
-	//return 1 << int(n - sizeof(uInt)*GetMemIndex(n));
+  return 1 << ((n - 1) % (8 * sizeof(uInt)));
 }
 
 // доступ к битам битового поля
@@ -48,19 +47,22 @@ int TBitField::GetLength(void) const // получить длину (к-во б�
 
 void TBitField::SetBit(const int n) // установить бит
 {
-	if (n < 0 || n >= bitLen) throw - 1;
+	if (n < 0 || n >= bitLen) 
+    throw -1;
 	pMem[GetMemIndex(n)] = pMem[GetMemIndex(n)] | GetMemMask(n);
 }
 
 void TBitField::ClrBit(const int n) // очистить бит
 {
-	if (n < 0 || n >= bitLen) throw - 1;
+	if (n < 0 || n >= bitLen) 
+    throw -1;
 	pMem[GetMemIndex(n)] = pMem[GetMemIndex(n)] & (~GetMemMask(n));
 }
 
 int TBitField::GetBit(const int n) const // получить значение бита
 {
-	if (n < 0 || n >= bitLen) throw - 1;
+	if (n < 0 || n >= bitLen) 
+    throw -1;
 	return (pMem[GetMemIndex(n)] & GetMemMask(n));
 }
 

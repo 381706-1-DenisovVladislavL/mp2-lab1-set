@@ -310,3 +310,47 @@ TEST(TBitField, bitfields_with_different_bits_are_not_equal)
 
   EXPECT_NE(bf1, bf2);
 }
+
+TEST(TBitField, equivalence_operator_bitfields_true)
+{
+  const int size = 4;
+  TBitField firstBf(size), secondBf(size);
+
+  firstBf.SetBit(0);
+  secondBf.SetBit(0);
+
+  EXPECT_EQ(secondBf == firstBf, true);
+}
+
+TEST(TBitField, equivalence_operator_bitfields_false)
+{
+  const int size = 4;
+  TBitField firstBf(size), secondBf(size);
+
+  firstBf.SetBit(0);
+  secondBf.SetBit(3);
+
+  EXPECT_EQ(secondBf == firstBf, false);
+}
+
+TEST(TBitField, anti_equivalence_operator_bitfields_true)
+{
+  const int size = 4;
+  TBitField firstBf(size), secondBf(size);
+
+  firstBf.SetBit(0);
+  secondBf.SetBit(0);
+
+  EXPECT_EQ(secondBf != firstBf, false);
+}
+
+TEST(TBitField, anti_equivalence_operator_bitfields_false)
+{
+  const int size = 4;
+  TBitField firstBf(size), secondBf(size);
+
+  firstBf.SetBit(0);
+  secondBf.SetBit(3);
+
+  EXPECT_EQ(secondBf != firstBf, true);
+}
