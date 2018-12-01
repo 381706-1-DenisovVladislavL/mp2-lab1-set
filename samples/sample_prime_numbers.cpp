@@ -16,7 +16,7 @@
 
 int main()
 {
-  int n, m, k, count;
+  int n, m, k, count, sizeBit;
 
   setlocale(LC_ALL, "Russian");
   cout << "Тестирование программ поддержки битового поля" << endl;
@@ -49,6 +49,20 @@ int main()
     }
   cout << endl;
   cout << "В первых " << n << " числах " << count << " простых" << endl;
+
+  cout << "\n\n\tВвод битовой строки\n";
+  cout << "Введите размер битовой строки\n";
+  cin >> sizeBit;
+  TBitField bit(sizeBit);
+  cout << "Введите битовую строку длинной " << sizeBit << "\n";
+  cin >> bit;
+  cout << "\nВаша битовая строка\n";
+  cout << bit;
+  cout << "\n\nМножество чисел битовой строки\n";
+  for (m = 0; m < sizeBit; m++)
+    if (bit.GetBit(m))
+      cout << setw(3) << m << " ";
+  cout << endl;
 }
 #else
 
@@ -102,6 +116,7 @@ int main()
   for (m = 0; m <= maxElem; m++)
     if (bit.IsMember(m))
       cout << setw(3) << m << " ";
+  cout << endl;
 }
 
 #endif
